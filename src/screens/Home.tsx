@@ -4,16 +4,32 @@ import { ChatTeardropText, SignOut } from "phosphor-react-native";
 import Filter from '../components/Filter'
 import Order, { OrderProps } from '../components/Order';
 import Button from '../components/Button';
+import { useNavigation } from '@react-navigation/native'
 
 import Logo from '../assets/logo_secondary.svg';
 
 function Home() {
+  const navigation = useNavigation();
   const [statusSelected, setStatusSelected] = useState<'open' | 'closed'>('open');
   const [orders, setOrders] = useState<OrderProps[]>([
-    
+    {
+      id: '123',
+      patrimony: '238423',
+      when: '18/07/2022',
+      status: 'open'
+    }
   ]);
   const { colors } = useTheme();
 
+  function handleNewOrder() {
+    navigation.navigate('new')
+  }
+
+  function handleOpenDetails(orderId: string) {
+    // passando o id do item selecionado para a tela de detalhes
+    navigation.navigate('details', { orderId })
+  }
+ 
   return (
     <VStack flex={1} pb={6} bg='gray.700'>
       <HStack
@@ -41,10 +57,10 @@ function Home() {
           alignItems='center'
         >
           <Heading color='gray.100'>
-            Meus chamados
+            Solicitações
           </Heading>
           <Text color='gray.200'>
-            3
+            {orders.length}
           </Text>
         </HStack>
 
@@ -72,9 +88,10 @@ function Home() {
           //identificador único
           keyExtractor={item => item.id}
           // oq eu vou renderizar
-          renderItem={({ item }) => <Order data={item} />}
+          renderItem={({ item }) => <Order data={item} onPress={() => handleOpenDetails(item.id)} />}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 50}}
+          // caso a lista estiver vazia, qual componente renderizar
           ListEmptyComponent={() => (
             <Center>
               <ChatTeardropText color={colors.gray[300]} size={40}/>
@@ -85,7 +102,7 @@ function Home() {
             </Center>
           )}
         />
-        <Button>Nova Solicitação</Button>
+        <Button onPress={handleNewOrder}>Nova Solicitação</Button>
       </VStack>
 
     </VStack>
