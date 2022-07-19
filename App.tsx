@@ -1,7 +1,9 @@
 import { Roboto_400Regular, Roboto_700Bold, useFonts } from '@expo-google-fonts/roboto';
 import { NativeBaseProvider, StatusBar } from 'native-base';
 import Loading from './src/components/Loading';
+import Home from './src/screens/Home';
 import SignIn from './src/screens/SignIn';
+import Register from './src/screens/Register';
 
 import { THEME } from './src/styles/theme';
 
