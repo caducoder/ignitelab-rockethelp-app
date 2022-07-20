@@ -1,16 +1,53 @@
 import { useState } from 'react'
-import { Heading, Icon, VStack, useTheme } from "native-base";
+import { Alert } from 'react-native'
+import auth from '@react-native-firebase/auth'
+import { Heading, Icon, VStack, useTheme } from "native-base"
 import { Envelope, Key } from "phosphor-react-native"
 import Logo from '../assets/logo_primary.svg'
-import Input from "../components/Input";
-import Button from "../components/Button";
+import Input from "../components/Input"
+import Button from "../components/Button"
 
 function SignIn() {
-  const [name, setName] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   
   const { colors } = useTheme();
-  
+
+  function handleSignIn() {
+    if (!email || !password) {
+      return Alert.alert("Entrar", 'Informe e-mail e senha');
+    }
+
+    setIsLoading(true)
+
+    auth()
+      .signInWithEmailAndPassword(email.trim(), password)
+      .then(response => {
+        console.log(response)
+      })
+      .catch(error => {
+        console.log(error)
+        setIsLoading(false)
+
+        if(error.code === 'auth/invalid-email') {
+          return Alert.alert('Entrar', 'Email ou senha inválida')
+        }
+
+        if(error.code === 'auth/wrong-password') {
+          return Alert.alert('Entrar', 'Email ou senha inválida')
+        }
+
+        if(error.code === 'auth/user-not-found') {
+          return Alert.alert('Entrar', 'Usuário não cadastrado.')
+        }
+
+        // alerta genérico, caso passe por todos os ifs
+        return Alert.alert('Entrar', 'Não foi possível acessar')
+      })
+
+  }
+   
   return ( 
     <VStack flex={1} alignItems='center' bg='gray.600' px={8} pt={24}>
       <Logo />
@@ -23,7 +60,7 @@ function SignIn() {
         placeholder='E-mail' 
         mb={5} 
         InputLeftElement={<Icon as={<Envelope color={colors.gray[300]}/>} ml={4}/>}
-        onChangeText={setName}
+        onChangeText={setEmail}
       />
       <Input 
         mb={8}
@@ -33,7 +70,12 @@ function SignIn() {
         onChangeText={setPassword}
       />
 
-        <Button mt={4} w='full'>Entrar</Button>
+        <Button 
+          mt={4} 
+          w='full' 
+          onPress={handleSignIn}
+          isLoading={isLoading}
+        >Entrar</Button>
     </VStack>
    );
 }

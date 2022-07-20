@@ -25,7 +25,7 @@ function Header({ title, ...rest}: Props) {
         onPress={() => navigation.goBack()}
       />
 
-      <Heading color='gray.100' textAlign='center' fontSize='lg' flex={1} ml={-6}>
+      <Heading color='gray.100' textAlign='center' fontSize='lg' flex={1} alignSelf='center'>
         {title}
       </Heading>
     </HStack>

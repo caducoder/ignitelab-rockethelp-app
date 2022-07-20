@@ -3,7 +3,6 @@ import { NativeBaseProvider, StatusBar } from 'native-base';
 import Loading from './src/components/Loading';
 import Routes from './src/routes';
 
-
 import { THEME } from './src/styles/theme';
 
 export default function App() {
