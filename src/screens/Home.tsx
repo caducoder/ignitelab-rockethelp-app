@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Alert } from 'react-native'
 import auth from '@react-native-firebase/auth'
 import { HStack, IconButton, VStack, useTheme, Text, Heading, FlatList, Center } from "native-base";
-import { ChatTeardropText, SignOut } from "phosphor-react-native";
+import { ChatTeardropText, SignOut, IdentificationBadge } from "phosphor-react-native";
 import Filter from '../components/Filter'
 import Order, { OrderProps } from '../components/Order';
 import Button from '../components/Button';
@@ -28,6 +28,10 @@ function Home() {
   function handleOpenDetails(orderId: string) {
     // passando o id do item selecionado para a tela de detalhes
     navigation.navigate('details', { orderId })
+  }
+
+  function handleOpenProfile() {
+    navigation.navigate('profile')
   }
 
   function handleLogout() {
@@ -79,10 +83,19 @@ function Home() {
       >
         <Logo />
 
-        <IconButton
-          icon={<SignOut size={26} color={colors.gray[300]} />}
-          onPress={handleLogout}
-        />
+        <HStack
+          alignItems='center'
+        >
+          <IconButton 
+            icon={<IdentificationBadge size={26} color={colors.gray[300]}/>}
+            onPress={handleOpenProfile}
+          />
+          <IconButton
+            icon={<SignOut size={26} color={colors.gray[300]} />}
+            onPress={handleLogout}
+          />
+        </HStack>
+
       </HStack>
 
       <VStack flex={1} px={6}>
