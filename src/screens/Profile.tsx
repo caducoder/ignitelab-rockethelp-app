@@ -1,26 +1,82 @@
-import { VStack, Text, HStack, Center, useTheme, ScrollView, AlertDialog, Button as NBButton } from "native-base";
+import { VStack, Text, Center, useTheme, ScrollView, AlertDialog, Button as NBButton } from "native-base";
 import { UserCircle } from "phosphor-react-native";
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth'
+import { Alert } from "react-native";
 import Header from '../components/Header'
 import Input from "../components/Input";
 import { useState, useEffect, useRef } from "react";
 import Button from "../components/Button";
+import { useNavigation } from "@react-navigation/native";
 
 function Profile() {
   const { colors } = useTheme();
+  const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState<FirebaseAuthTypes.User>();
+  const [nome, setNome] = useState<string | null>();
+  const [email, setEmail] = useState<string | null>();
+  const [novaSenha, setNovaSenha] = useState('');
   const [isOpen, setIsOpen] = useState(false);
 
   const onClose = () => setIsOpen(false);
 
   const cancelRef = useRef(null);
 
+  function deleteUser() {
+    user.delete()
+      .then(() => {
+        Alert.alert("Perfil", "Usuário deletado com sucesso.");
+      })
+      .catch(err => {
+        Alert.alert("Perfil", err.message);
+      })
+  }
+
+  async function handleSaveProfile() {
+
+    setIsLoading(true)
+
+    try {
+      if(nome){
+        await user.updateProfile({displayName: nome})
+      }
+  
+      if(email){
+        await user.updateEmail(email)
+      }
+  
+      if(novaSenha){
+        await user.updatePassword(novaSenha)
+      }
+
+      Alert.alert("Perfil", "Perfil atualizado com sucesso!")
+    } catch (error) {
+      console.log(error.message)
+
+      if(error.code === 'auth/requires-recent-login'){
+        return Alert.alert("Perfil", "Essa ação requer um login recente. Por favor, relogue antes de tentar denovo.");
+      }
+
+      if(error.code === 'auth/invalid-email') {
+        return Alert.alert('Perfil', 'Email inválido')
+      }
+
+      if(error.code === 'auth/weak-password') {
+        return Alert.alert('Perfil', 'Senha fraca')
+      }
+
+      Alert.alert("Perfil", "Não foi possível atualizar o perfil.")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   useEffect(() => {
 
     const user = auth().currentUser
 
     setUser(user);
-
+    setNome(user?.displayName);
+    setEmail(user?.email);
 
   }, []);
 
@@ -37,21 +93,8 @@ function Profile() {
             <Text color='white' mb={2}>Nome</Text>
             <Input
               placeholder="Seu nome"
-              value={''}
-            />
-          </VStack>
-
-          <VStack >
-            <Text color='white' mb={2}>Cargo</Text>
-            <Input
-              placeholder="Sua profissão"
-            />
-          </VStack>
-
-          <VStack >
-            <Text color='white' mb={2}>Celular</Text>
-            <Input
-              placeholder="(00) 900000000"
+              value={nome}
+              onChangeText={setNome}
             />
           </VStack>
 
@@ -59,7 +102,8 @@ function Profile() {
             <Text color='white' mb={2}>E-mail</Text>
             <Input
               placeholder="Seu e-mail"
-              value={''}
+              value={email}
+              onChangeText={setEmail}
             />
           </VStack>
 
@@ -67,11 +111,18 @@ function Profile() {
             <Text color='white' mb={2}>Alterar senha</Text>
             <Input
               placeholder="Nova senha"
-
+              onChangeText={setNovaSenha}
             />
           </VStack>
 
-          <Button mt={7}>Salvar</Button>
+          <Button 
+            mt={7} 
+            onPress={handleSaveProfile}
+            isLoading={isLoading}
+          >
+            Salvar
+          </Button>
+
           <Button bg='red.700' _pressed={{ bg: 'red.500' }} onPress={() => setIsOpen(true)}>
             Deletar conta
           </Button>
@@ -91,11 +142,12 @@ function Profile() {
                     <NBButton variant="outline" colorScheme='blueGray' onPress={onClose} ref={cancelRef}>
                       Cancelar
                     </NBButton>
-                    <NBButton colorScheme="danger" onPress={onClose}>
+                    <NBButton colorScheme="danger" onPress={deleteUser}>
                       Deletar
                     </NBButton>
                   </NBButton.Group>
                 </AlertDialog.Footer>
+
               </AlertDialog.Content>
             </AlertDialog>
           </Center>

@@ -1,8 +1,8 @@
 import { Text, VStack } from "native-base";
-import { useState } from 'react'
+import { useState } from 'react';
 import { Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import firestore from '@react-native-firebase/firestore'
+import firestore from '@react-native-firebase/firestore';
 
 import Button from "../components/Button";
 import Input from "../components/Input";
