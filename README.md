@@ -6,6 +6,13 @@
 
 </div>
 
+## :movie_camera: Demonstração
+<div align="center">
+
+https://user-images.githubusercontent.com/73801000/180617079-c10b49d8-a224-4f51-a316-6bb0d6511428.mp4
+
+</div>
+
 ## :clipboard: Sobre
 Projeto realizado no evento feito pela Rocketseat: Ignite Lab React Native. O aplicativo é uma plataforma para solicitações de manutenção de equipamentos internos de uma empresa. Ele tem autenticação e atualização em tempo real, e adicionei uma tela de perfil do usuário.
 
